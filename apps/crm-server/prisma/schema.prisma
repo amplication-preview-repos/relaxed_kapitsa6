@@ -1,0 +1,76 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model InterfaceModel {
+  clientInterfaces ClientInterface[]
+  createdAt        DateTime          @default(now())
+  description      String?
+  id               String            @id @default(cuid())
+  name             String?
+  updatedAt        DateTime          @updatedAt
+}
+
+model Client {
+  address           String?
+  clientInterfaces  ClientInterface[]
+  contacts          Contact[]
+  createdAt         DateTime          @default(now())
+  email             String?
+  flexAccountNumber String?
+  id                String            @id @default(cuid())
+  name              String?
+  phoneNumber       String?
+  rdpDetails        RdpDetail[]
+  updatedAt         DateTime          @updatedAt
+}
+
+model Contact {
+  client    Client?  @relation(fields: [clientId], references: [id])
+  clientId  String?
+  createdAt DateTime @default(now())
+  email     String?
+  id        String   @id @default(cuid())
+  name      String?
+  phone     String?
+  updatedAt DateTime @updatedAt
+}
+
+model ClientInterface {
+  accessDetails    String?
+  client           Client?         @relation(fields: [clientId], references: [id])
+  clientId         String?
+  createdAt        DateTime        @default(now())
+  id               String          @id @default(cuid())
+  interfaceField   InterfaceModel? @relation(fields: [interfaceFieldId], references: [id])
+  interfaceFieldId String?
+  updatedAt        DateTime        @updatedAt
+}
+
+model RdpDetail {
+  client    Client?  @relation(fields: [clientId], references: [id])
+  clientId  String?
+  createdAt DateTime @default(now())
+  host      String?
+  id        String   @id @default(cuid())
+  password  String?
+  updatedAt DateTime @updatedAt
+  username  String?
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
